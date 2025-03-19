@@ -13,7 +13,8 @@ class App extends React.Component {
       orders: [],
       currentItems: [],
       items: [],
-      ShowFullItem: false,
+      showFullItem: false,
+      fullItem: null, 
     };
 
     this.addToOrder = this.addToOrder.bind(this);
@@ -22,14 +23,13 @@ class App extends React.Component {
     this.onShowItem = this.onShowItem.bind(this);
   }
 
-  // Загружаем товары из базы при загрузке страницы
   componentDidMount() {
     axios
-      .get("http://localhost:5000/Items") // Меняем products на items
+      .get("http://localhost:5000/items")
       .then((response) => {
         this.setState({
           items: response.data,
-          currentItems: response.data, // Показываем все товары сразу
+          currentItems: response.data, 
         });
       })
       .catch((error) => {
@@ -42,16 +42,25 @@ class App extends React.Component {
       <div className="wrapper">
         <Header orders={this.state.orders} onDelete={this.deleteOrder} />
         <Categories chooseCategory={this.chooseCategory} />
-        <Items onShowItem={this.onShowItem} items={this.state.currentItems} onAdd={this.addToOrder} />
-
-        {this.state.ShowFullItem && <ShowFullItem onAdd={this.addToOrder} onShowItem={this.onShowItem} item={this.state.fullItem} />}
+        <Items
+          onShowItem={this.onShowItem}
+          items={this.state.currentItems}
+          onAdd={this.addToOrder}
+        />
+        {this.state.showFullItem && (
+          <ShowFullItem
+            onAdd={this.addToOrder}
+            onShowItem={this.onShowItem}
+            item={this.state.fullItem}
+          />
+        )}
         <Footer />
       </div>
     );
   }
 
   onShowItem(item) {
-    this.setState({ fullItem: item, ShowFullItem: !this.state.ShowFullItem });
+    this.setState({ fullItem: item, showFullItem: !this.state.showFullItem });
   }
 
   chooseCategory(category) {
@@ -60,20 +69,20 @@ class App extends React.Component {
       return;
     }
     this.setState({
-      currentItems: this.state.items.filter((el) => el.category === category),
+      currentItems: this.state.items.filter((el) => el.Category === category),
     });
   }
 
   deleteOrder(id) {
-    this.setState({ orders: this.state.orders.filter((el) => el.id !== id) });
+    this.setState({ orders: this.state.orders.filter((el) => el.Id !== id) }); 
   }
 
   addToOrder(item) {
-    let isInArray = false;
-    this.state.orders.forEach((el) => {
-      if (el.id === item.id) isInArray = true;
-    });
-    if (!isInArray) this.setState({ orders: [...this.state.orders, item] });
+    let isInArray = this.state.orders.some((el) => el.Id === item.Id); 
+
+    if (!isInArray) {
+      this.setState({ orders: [...this.state.orders, item] });
+    }
   }
 }
 

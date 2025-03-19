@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import axios from 'axios';
 
 export class Categories extends Component {
     constructor(props) {
@@ -32,6 +33,16 @@ export class Categories extends Component {
             ]
         }
     }
+    componentDidMount() {
+        axios.get('http://localhost:5000/categories') 
+          .then(response => {
+            this.setState({ Category: response.data });
+          })
+          .catch(error => {
+            console.error("Ошибка загрузки категорий:", error);
+          });
+      }
+    
   render() {
     return (
       <div className='categories'>
@@ -44,3 +55,5 @@ export class Categories extends Component {
 }
 
 export default Categories
+
+
