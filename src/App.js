@@ -5,7 +5,6 @@ import Footer from "./components/footer";
 import Items from "./components/items";
 import Categories from "./components/categories";
 import ShowFullItem from "./components/showFullItem";
-
 class App extends React.Component {
   constructor(props) {
     super(props);

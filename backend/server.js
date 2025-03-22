@@ -1,3 +1,4 @@
+
 const express = require("express");
 const sql = require("mssql");
 const cors = require("cors");
@@ -50,6 +51,18 @@ app.get("/items", async (req, res) => {
         res.json(result.recordset);
     } catch (err) {
         console.error("❌ Ошибка при запросе данных:", err.message);
+        res.status(500).send(err.message);
+    }
+});
+app.get("/categories", async (req, res) => {
+    console.log("🟢 Запрос на /categories получен");
+    try {
+        let pool = await sql.connect(dbConfig);
+        let result = await pool.request().query("SELECT DISTINCT Category FROM Items"); // Берём уникальные категории из Items
+        res.json(result.recordset);
+        console.log("🔹 Категории из БД:", result.recordset);
+    } catch (err) {
+        console.error("❌ Ошибка при запросе категорий:", err.message);
         res.status(500).send(err.message);
     }
 });
